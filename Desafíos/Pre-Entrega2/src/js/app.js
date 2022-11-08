@@ -1,11 +1,12 @@
-/* Datos del cliente */
+/* --------------------------- Datos del cliente --------------------------- */
 function inicio() {
     let cliente = new Object();
     alert("Bienvenido a Lazy restaurant\nantes de comenzar con tu pedido debes llenar los datos de facturación.");
     cliente.nombre = prompt("Por favor ingresar un nombre y un apellido");
     let correcto = false;
-    let pago = prompt("Ingrese el número de la forma de pago:\n1.Targeta de debito\n2.Targeta de credito\n3.Efectivo");
     do {
+        let pago = prompt("Ingrese el número de la forma de pago:\n1.Targeta de debito\n2.Targeta de credito\n3.Efectivo");
+        correcto = false;
         switch (pago) {
             case "1":
                 cliente.pago = "Targeta de debito";
@@ -24,8 +25,8 @@ function inicio() {
         }
     } while (correcto == false);
 
-    let consumo = prompt("Consumo:\n1.En el restaurante\n2.Para llevar\n3.Servicio a domicilio");
     do {
+        let consumo = prompt("Consumo:\n1.En el restaurante\n2.Para llevar\n3.Servicio a domicilio");
         correcto = false;
         switch (consumo) {
             case "1":
@@ -208,68 +209,23 @@ function bebida() {
     return comida;
 }
 
-/* Panel del menu */
-function menu() {
-    let fin = false;
-    let productos = [];
-    let food = [];
-    do {
-        let opcion = prompt("Nuestro menu\n\n\t1.Entradas\n\t2.Postres\n\t3.Banquetes\n\t4.Especialidades\n\t5.Bebidas\n\t6.Editar el pedido\n\t7.Terminar con el pedido\n\n");
-        switch (opcion) {
-            case "1":
-                food = entrada();
-                productos = productos.concat(food);
-                console.log(productos);
-                break;
-            case "2":
-                food = postre();
-                productos = productos.concat(food);
-                console.log(productos);
-                break;
-            case "3":
-                food = banquete();
-                productos = productos.concat(food);
-                console.log(productos);
-                break;
-            case "4":
-                food = especialidad();
-                productos = productos.concat(food);
-                console.log(productos);
-                break;
-            case "5":
-                food = bebida();
-                productos = productos.concat(food);
-                console.log(productos);
-                break;
-            case "6":
-                productos = editar(productos);
-                break;
-            case "7":
-                fin = true;
-                break;
-            default:
-                break;
-        }
-    } while (fin == false)
-
-    return productos;
-}
-
 /* Eliminar un elemento del array */
-function eliminar(comida){
-    let al = prompt("Ingrese el nombre del nombre del alimento que desea eliminar \n"+comida.map((el)=> "\n"+el.nombre+"\n"));
-    let nuevo = comida.filter((el)=>el.nombre != al);
+function eliminar(comida) {
+    let al = prompt("Ingrese el nombre del nombre del alimento que desea eliminar \n" + comida.map((el) => "\n" + el.nombre + "\n"));
+    let nuevo = comida.filter((el) => el.nombre != al);
+    if (nuevo.length == comida.length) {
+        alert("Es posible que halla ingresado mal la comida a eliminar")
+    }
     comida = nuevo;
     return comida;
-
 }
 
 /* Mostrar el pedido */
-function mostrar(comida){
-    alert(comida.map((el)=> el.nombre+"\n"));
+function mostrar(comida) {
+    alert(comida.map((el) => el.nombre + "\t$" + el.precio + "\n"));
 }
 
-/* Edicion del pedido */
+/* --------------------------- Menú de edicion del pedido --------------------------- */
 function editar(productos) {
     let comida = productos;
     let fin = false;
@@ -278,7 +234,7 @@ function editar(productos) {
         switch (op) {
             case "1":
                 comida = eliminar(comida);
-                alert("El pedido ahora es:\n"+comida.map((el)=> el.nombre+"\n"))
+                alert("El pedido ahora es:\n" + comida.map((el) => el.nombre + "\n"))
                 break;
             case "2":
                 mostrar(comida);
@@ -294,16 +250,105 @@ function editar(productos) {
     return comida;
 }
 
-/* Procesos de facturación */
+/* Elementos especiales */
+function informacion_especial(productos) {
+    let es = productos;
+    let fin = false;
+    let arreglo = [];
+    let resultado;
+    do {
+        let op = prompt("Ingrese el numero de la funcion a la que quiera ingresar\n\t1.Producto mas caro\n\t2.Producto mas barato\n\t3.Regresar al menu anterior");
+        switch (op) {
+            case "1":
+                es.forEach((el) => {
+                    arreglo.push(el.precio);
+                });
+                /* console.log(arreglo); */
+                num = Math.max.apply(Math, arreglo);
+                resultado = es.filter((el) => el.precio == num);
+                /* console.log(Math.max.apply(Math, arreglo));
+                console.log(es.filter((el)=>el.precio == parseInt(num))); */
+                alert("La comida mas costosa es:\n\n\t" + resultado[0].nombre + " $" + resultado[0].precio);
+                fin = true;
+                arreglo = [];
+                break;
+            case "2":
+                es.forEach((el) => {
+                    arreglo.push(el.precio);
+                });
+                /* console.log(arreglo);
+                console.log(Math.min.apply(Math, arreglo)); */
+                num = Math.min.apply(Math, arreglo);
+                resultado = es.filter((el) => el.precio == num);
+                /* console.log(resultado); */
+                alert("La comida mas barata es:\n\n\t" + resultado[0].nombre + " $" + resultado[0].precio);
+                fin = true;
+                arreglo = [];
+                break;
+            case "3":
+                fin = true;
+                break;
+            default:
+                alert("Ingreso un caracter invalido");
+                break;
+        }
+    } while (fin == false)
+}
+
+/* --------------------------- Panel del menu --------------------------- */
+function menu() {
+    let fin = false;
+    let productos = [];
+    let food = [];
+    do {
+        let opcion = prompt("Nuestro menu\n\n\t1.Entradas\n\t2.Postres\n\t3.Banquetes\n\t4.Especialidades\n\t5.Bebidas\n\t6.Editar el pedido\n\t7.Datos especiales\n\t8.Terminar con el pedido\n\n");
+        switch (opcion) {
+            case "1":
+                food = entrada();
+                productos = productos.concat(food);
+                /* console.log(productos); */
+                break;
+            case "2":
+                food = postre();
+                productos = productos.concat(food);
+                /* console.log(productos); */
+                break;
+            case "3":
+                food = banquete();
+                productos = productos.concat(food);
+                /* console.log(productos); */
+                break;
+            case "4":
+                food = especialidad();
+                productos = productos.concat(food);
+                /* console.log(productos); */
+                break;
+            case "5":
+                food = bebida();
+                productos = productos.concat(food);
+                /* console.log(productos); */
+                break;
+            case "6":
+                productos = editar(productos);
+                break;
+            case "7":
+                informacion_especial(productos);
+                break;
+            case "8":
+                fin = true;
+                break;
+            default:
+                break;
+        }
+    } while (fin == false)
+
+    return productos;
+}
+
+/* --------------------------- Procesos de facturación --------------------------- */
 class factura {
     constructor() {
         this.cliente = inicio();
-    }
-
-    imprimirFactura() {
-        const total = this.cliente.productos.reduce((ac,el) => ac + el.precio,0);
-
-        alert("DETALLES DE FACTURA\n\tNombre del cliente: "+this.cliente.nombre+"\n\tForma de pago: "+this.cliente.pago+"\n\tConsumo: "+this.cliente.consumo+"\n\nDETALLE DE COMPRA\n"+this.cliente.productos.map((el)=> "\t"+el.nombre+"\n")+"\n\nTOTAL\t$"+total);
     }
 
     pedido() {
@@ -311,9 +356,18 @@ class factura {
         console.log("Resumen de compra");
         console.log(this.cliente.productos);
     }
+
+    imprimirFactura() {
+        const total = this.cliente.productos.reduce((ac, el) => ac + el.precio, 0);
+
+        alert("DETALLES DE FACTURA\n\tNombre del cliente: " + this.cliente.nombre + "\n\tForma de pago: " + this.cliente.pago + "\n\tConsumo: " + this.cliente.consumo + "\n\nDETALLE DE COMPRA\n" + this.cliente.productos.map((el) => "\t" + el.nombre + "\t$" + el.precio + "\n") + "\n\nTOTAL\t$" + total);
+    }
+
+
+
 }
 
-/* Inicio de la simulación */
+/* --------------------------- Inicio de la simulación --------------------------- */
 let compra = new factura();
 compra.pedido();
 compra.imprimirFactura();
